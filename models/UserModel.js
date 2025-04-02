@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const UserModel = mongoose.Schema({
     userName:{type: String, required: true,minLength:2},
-    password: { type: int,required:true,minLength:6 },
+    password: { type: String,required:true,minLength:6 },
     role: {
         type: String,
         enum: ['admin', 'developer', 'support'],
