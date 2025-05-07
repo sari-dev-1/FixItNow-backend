@@ -6,6 +6,7 @@ import {
     ClockCircleOutlined,
     LeftOutlined,
 } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 
 const Header = lazy(() => import('./Header'));
 const Footer = lazy(() => import('./Footer'));
@@ -16,7 +17,7 @@ const cardData = [
     {
         icon: <ProfileOutlined style={{ fontSize: '3.5rem', color: '#1677ff' }} />,
         title: 'הבקשות שלי',
-        link: '/my-requests'
+        link: '/MyRequests'
     },
     {
         icon: <PlusCircleOutlined style={{ fontSize: '3.5rem', color: '#1677ff' }} />,
@@ -31,6 +32,7 @@ const cardData = [
 ];
 
 const HomePage = () => {
+    const navigate = useNavigate();
     return (
         <Layout
             style={{
@@ -80,6 +82,7 @@ const HomePage = () => {
                         >
                             <Card
                                 hoverable
+                                onClick={() => navigate(item.link)}
                                 style={{
                                     textAlign: 'center',
                                     borderRadius: '12px',

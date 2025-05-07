@@ -14,7 +14,7 @@ const SignIn = () => {
     debugger
     try {
       const { confirm, ...cleanedValues } = values;
-      const response = await fetch("http://localhost:8080/User/addUser", {
+      const response = await fetch("http://localhost:8080/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -24,6 +24,7 @@ const SignIn = () => {
 
       const result = await response.json();
       console.log("התגובה מהשרת:", result);
+      debugger
       navigate("/HomePage");
     } catch (err) {
       console.error("שגיאה בשליחה לשרת:", err);
@@ -52,7 +53,7 @@ const SignIn = () => {
                 alignContent: 'center'
             }}
         >
-      <div style={{ direction: 'rtl', textAlign: 'right' ,padding: '3%',backgroundColor:'white',width:'30vw',height:'60vh',borderRadius:'10px' }}>
+      <div style={{ direction: 'rtl', textAlign: 'right' ,padding: '3%',backgroundColor:'white',width:'30vw',height:'70vh',borderRadius:'10px' }}>
       <Form
         form={form}
         name="register"
@@ -108,9 +109,18 @@ const SignIn = () => {
             <Option value="admin">אדמין</Option>
           </Select>
         </Form.Item>
+        <Button
+          style={{ width: '100%', marginTop: '1rem', backgroundColor: '#db4437', color: 'white',margin:'10px',height:'35px',left:'7px' }}
+          onClick={() => {
+          window.location.href = "http://localhost:8080/auth/google";
+          }}
+              >
+              התחברות עם Google
+        </Button>
+
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" block>
+          <Button style={{padding:'5px'}} type="primary" htmlType="submit" block > 
             הרשמה
           </Button>
           כבר רשום?  

@@ -13,19 +13,27 @@ const Login = () => {
 
   const handleSubmit = async (values) => {
     try {
-      const response = await fetch("http://localhost:8080/User/getUserbyName/" + values.username, {
-        method: "GET",
+      debugger
+      const response = await fetch("http://localhost:8080/auth/login" , {
+        method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
+        body: JSON.stringify({ userName: values.username, password: values.password })
       });
 
       const result = await response.json();
       console.log("התגובה מהשרת:", result);
 
-      if (result.password === values.password) {
-        dispatch(updateName(result.name));
-        dispatch(updateRole(result.role));
+
+    if (response.ok && result) {
+      // כאן אפשר לפענח את הטוקן אם צריך או לשמור אותו
+      localStorage.setItem("token", result.token);
+
+      // if (result.password === values.password) {
+      //   dispatch(updateName(result.name));
+      //   dispatch(updateRole(result.role));
+        navigate("/HomePage");
       } else {
         // קביעת שגיאה בשדה הסיסמה
         form.setFields([
@@ -35,13 +43,14 @@ const Login = () => {
           },
         ]);
       }
-      navigate("/HomePage");
+      
     } catch (err) {
       console.error("שגיאה בשליחה לשרת:", err);
     }
   };
 
   const onFinish = (values) => {
+    debugger
     console.log('Received values of form: ', values);
     handleSubmit(values);
   };
@@ -64,7 +73,7 @@ const Login = () => {
             }}
         >
 
-<div style={{ direction: 'rtl', textAlign: 'right',padding: '3%',backgroundColor:'white',width:'30vw',height:'50vh',borderRadius:'10px' }}>
+<div style={{ direction: 'rtl', textAlign: 'right',padding: '3%',backgroundColor:'white',width:'30vw',height:'60vh',borderRadius:'10px' }}>
       <Form
         form={form} // מחברים את ה־form instance
         name="login"
@@ -95,7 +104,13 @@ const Login = () => {
             <a href="">שכחת סיסמא?</a>
           </Flex>
         </Form.Item>
-
+            <Button
+              style={{ width: '100%', marginTop: '1rem', backgroundColor: '#db4437', color: 'white',margin:'10px',height:'35px',left:'7px' }}
+              onClick={() => {
+                window.location.href = "http://localhost:8080/auth/google";
+                }}>
+                  כניסה עם Google
+            </Button>
         <Form.Item>
           <Button block type="primary" htmlType="submit">
             כניסה

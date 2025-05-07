@@ -1,23 +1,53 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const responseRouter = require("./routers/responseRouter");
-//const ticketRouter = require("./routers/ticketRouter");
-const ticketTypeRouter=require("./routers/ticketTypeRouter");
-const userRouter=require("./routers/userRouter");
-const dotenv=require("dotenv")
-dotenv.config()
+const dotenv = require("dotenv");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const passport = require("passport");
+const session = require("express-session"); // משתמשים ב-express-session במקום cookie-session
 
+// התחברות לקובץ סיסמאות
+dotenv.config();
+
+// יצירת האפליקציה
 const app = express();
+app.use(express.json());
 
-const mongoose = require("mongoose")
-mongoose.connect(process.env.DB_URL)
-.then(() => console.log("Connected…")).catch(err => console.error("Connection failed…"))
+// קונפיגורציה ל־passport
+require("./config/passport");
 
+app.use(cors());
 app.use(bodyParser.json());
+
+// משתמשים ב-express-session במקום cookie-session
+app.use(session({
+  secret: 'secretkey', // מפתח הצפנה (מומלץ לשנות אותו ליותר מאובטח בסביבה אמיתית)
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // אם יש שימוש ב-HTTPS, יש לשנות ל-true
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// התחברות למסד נתונים
+mongoose.connect(process.env.DB_URL)
+  .then(() => console.log("Connected…"))
+  .catch(err => console.error("Connection failed…"));
+
+// ראוטים
+const responseRouter = require("./routers/responseRouter");
+const ticketTypeRouter = require("./routers/ticketTypeRouter");
+const userRouter = require("./routers/userRouter");
+const authRouter = require("./routers/authRouter");
+
 app.use("/response", responseRouter);
-//app.use("/ticket", ticketRouter);
-app.use("/TicketType",ticketTypeRouter);
-app.use("/User",userRouter);
+app.use("/TicketType", ticketTypeRouter);
+app.use("/User", userRouter);
+app.use("/auth", authRouter); // ראוט של התחברות רגילה + גוגל
 
-app.listen(process.env.PORT, () => console.log(`Server running on http://localhost:${process.env.PORT}`));
+app.get("/", (req, res) => res.send("Server is running"));
 
+app.listen(process.env.PORT, () =>
+  console.log(`Server running on http://localhost:${process.env.PORT}`)
+);
